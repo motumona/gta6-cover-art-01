@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Vice Coast Cover Studio — Buat Cover Gaya Poster Vice City</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header class="topbar">
+  <div class="brand">
+    <h1>VICE COAST <span>Cover Studio</span></h1>
+    <p>Foto + caption jadi cover gaya poster Vice City. Semua diproses di mesinmu — foto tidak pernah diunggah.</p>
+  </div>
+  <div class="quick-actions">
+    <button id="uploadButton" type="button" class="btn primary">📷 Tambah Foto</button>
+    <input id="photoPicker" type="file" accept="image/*" multiple hidden>
+    <button id="sampleBoulevardButton" type="button" class="btn">Foto Contoh: Boulevard</button>
+    <button id="samplePierButton" type="button" class="btn">Foto Contoh: Pier</button>
+  </div>
+</header>
+
+<main class="workspace">
+  <section class="preview-column" aria-label="Pratinjau cover">
+    <div id="dropZone" class="drop-zone">
+      <canvas id="coverPreview" width="1080" height="1080"></canvas>
+      <p class="drop-hint">Seret foto ke sini, atau klik “Tambah Foto”. Seret di dalam panel untuk menggeser foto, roda mouse untuk zoom.</p>
+    </div>
+    <div class="size-row" aria-label="Ukuran export">
+      <span class="row-label">Ukuran export:</span>
+      <button type="button" class="btn size-btn" data-export-width="1080" data-export-height="1080">1080 × 1080</button>
+      <button type="button" class="btn size-btn" data-export-width="1080" data-export-height="1350">1080 × 1350</button>
+      <button type="button" class="btn size-btn" data-export-width="1920" data-export-height="1080">1920 × 1080</button>
+      <button type="button" class="btn primary" id="exportAllButton">Export Semua (3 PNG)</button>
+    </div>
+    <p id="exportStatus" class="status" role="status">Siap. Pilih foto contoh untuk mulai.</p>
+  </section>
+
+  <aside class="controls-column" aria-label="Pengaturan cover">
+    <section class="control-group">
+      <h2>1 · Tata Letak Panel</h2>
+      <div class="layout-grid" id="layoutPicker">
+        <button type="button" class="layout-btn is-active" data-layout="hero-trio">Hero + 3 Panel</button>
+        <button type="button" class="layout-btn" data-layout="grid-2x2">Grid 2 × 2</button>
+        <button type="button" class="layout-btn" data-layout="strip-4">Strip 4 Panel</button>
+        <button type="button" class="layout-btn" data-layout="fullbleed-inset">Full-Bleed + Inset</button>
+      </div>
+      <p class="hint">Satu foto bisa mengisi beberapa panel, atau tiap panel foto berbeda.</p>
+    </section>
+
+    <section class="control-group">
+      <h2>2 · Foto Tiap Panel</h2>
+      <label class="field-label" for="panelSelector">Panel yang diedit</label>
+      <select id="panelSelector"></select>
+      <label class="field-label" for="panelPhotoSelector">Foto panel ini</label>
+      <select id="panelPhotoSelector"></select>
+      <button type="button" class="btn small" id="fillAllButton">Isi semua panel dengan foto ini</button>
+      <label class="field-label" for="panelZoomSlider">Zoom <output id="panelZoomValue">100%</output></label>
+      <input id="panelZoomSlider" type="range" min="100" max="300" value="100" step="1">
+      <label class="field-label" for="panelPanXSlider">Geser kiri–kanan <output id="panelPanXValue">0</output></label>
+      <input id="panelPanXSlider" type="range" min="-100" max="100" value="0" step="1">
+      <label class="field-label" for="panelPanYSlider">Geser atas–bawah <output id="panelPanYValue">0</output></label>
+      <input id="panelPanYSlider" type="range" min="-100" max="100" value="0" step="1">
+    </section>
+
+    <section class="control-group">
+      <h2>3 · Caption</h2>
+      <label class="field-label" for="coverTitleInput">Judul besar</label>
+      <input id="coverTitleInput" type="text" value="SUNSET HEIST" maxlength="40">
+      <label class="field-label" for="coverSubtitleInput">Subjudul script</label>
+      <input id="coverSubtitleInput" type="text" value="Boulevard Queen" maxlength="60">
+      <label class="field-label">Warna judul</label>
+      <div class="swatch-row" id="titleColorPicker">
+        <button type="button" class="swatch is-active" data-title-color="#ffffff" style="background:#ffffff" aria-label="Putih"></button>
+        <button type="button" class="swatch" data-title-color="#ffd23e" style="background:#ffd23e" aria-label="Kuning sunset"></button>
+        <button type="button" class="swatch" data-title-color="#ff5ea8" style="background:#ff5ea8" aria-label="Pink neon"></button>
+        <button type="button" class="swatch" data-title-color="#2ee6c8" style="background:#2ee6c8" aria-label="Teal neon"></button>
+      </div>
+      <label class="field-label" for="titlePositionSelector">Posisi judul</label>
+      <select id="titlePositionSelector">
+        <option value="bottom" selected>Bawah</option>
+        <option value="top">Atas</option>
+        <option value="center">Tengah</option>
+      </select>
+    </section>
+
+    <section class="control-group">
+      <h2>4 · Colour Grade</h2>
+      <div class="grade-grid" id="gradePicker">
+        <button type="button" class="grade-btn is-active" data-grade="sunset">Vice Sunset</button>
+        <button type="button" class="grade-btn" data-grade="neon">Neon Night</button>
+        <button type="button" class="grade-btn" data-grade="golden">Golden Hour</button>
+        <button type="button" class="grade-btn" data-grade="noir">Noir</button>
+      </div>
+      <p class="hint">Grade diaplikasikan ke semua panel: gradient-map, grain film, dan vignette.</p>
+    </section>
+
+    <section class="control-group">
+      <h2>5 · Ukuran Kanvas</h2>
+      <div class="size-grid" id="canvasSizePicker">
+        <button type="button" class="size-btn is-active" data-canvas-width="1080" data-canvas-height="1080">Kotak 1080 × 1080</button>
+        <button type="button" class="size-btn" data-canvas-width="1080" data-canvas-height="1350">Potret 1080 × 1350</button>
+        <button type="button" class="size-btn" data-canvas-width="1920" data-canvas-height="1080">Lanskap 1920 × 1080</button>
+      </div>
+      <p class="hint">Export selalu memakai ukuran penuh (PNG), pratinjau di atas mengikuti ukuran ini.</p>
+    </section>
+
+    <p class="credit">Vice Coast Cover Studio — karya original. Font Anton &amp; Pacifico (SIL Open Font License). Tanpa logo atau artwork game apa pun.</p>
+  </aside>
+</main>
+
+<script src="cover.js"></script>
+<script src="editor.js"></script>
+</body>
+</html>
